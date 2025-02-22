@@ -1,5 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-
+import dotenv from 'dotenv';
+dotenv.config({
+    path: './.env'
+});
 const Fridge = () => {
   const mapContainerRef = useRef(null);
 
@@ -16,7 +19,7 @@ const Fridge = () => {
 
     // Load the Google Maps script dynamically
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAJ3KUzqKJfvZeJ5TsYzK00stAtFP_tZS8&callback=loadGoogleMap`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=loadGoogleMap`;
     script.async = true;
     document.body.appendChild(script);
 
