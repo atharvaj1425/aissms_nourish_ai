@@ -463,56 +463,58 @@ const getActiveMeals = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, activeMeals, "Active meals fetched successfully"));
 });
 
-const getUserLeaderboard = asyncHandler(async (req, res) => {
-    const userId = req.user._id;
 
+const getUserLeaderboard = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  try {
     // Get top 5 individual donors
     const topDonors = await SingleMeal.aggregate([
-        {
-            $match: {
-                status: { $in: ["Delivered", "Accepted", "Out for Delivery"] }
+      {
+        $match: {
+          status: { $in: ["Delivered", "Accepted", "Out for Delivery"] }
+        }
+      },
+      {
+        $group: {
+          _id: "$donor",
+          totalQuantity: {
+            $sum: {
+              $toDouble: {
+                $replaceAll: {
+                  input: "$quantity",
+                  find: " ",
+                  replacement: ""
+                }
+              }
             }
-        },
-        {
-            $group: {
-                _id: "$donor",
-                totalQuantity: {
-                    $sum: {
-                        $toInt: {
-                            $replaceAll: {
-                                input: "$quantity",
-                                find: " ",
-                                replacement: ""
-                            }
-                        }
-                    }
-                },
-                donationsCount: { $sum: 1 }
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "_id",
-                foreignField: "_id",
-                as: "userDetails"
-            }
-        },
-        { $unwind: "$userDetails" },
-        {
-            $match: {
-                "userDetails.role": "individual"
-            }
-        },
-        {
-            $project: {
-                _id: 1,
-                name: "$userDetails.name",
-                totalQuantity: 1,
-                donationsCount: 1
-            }
-        },
-        { $sort: { totalQuantity: -1 } }
+          },
+          donationsCount: { $sum: 1 }
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "userDetails"
+        }
+      },
+      { $unwind: "$userDetails" },
+      {
+        $match: {
+          "userDetails.role": "individual"
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          name: "$userDetails.name",
+          totalQuantity: 1,
+          donationsCount: 1
+        }
+      },
+      { $sort: { totalQuantity: -1 } }
     ]);
 
     // Get all donors for ranking
@@ -520,24 +522,30 @@ const getUserLeaderboard = asyncHandler(async (req, res) => {
     
     // Find user's position
     const userPosition = allDonors.findIndex(donor => 
-        donor._id.toString() === userId.toString()
+      donor._id.toString() === userId.toString()
     ) + 1;
 
     // Get user's donation data
     const userData = allDonors.find(donor => 
-        donor._id.toString() === userId.toString()
+      donor._id.toString() === userId.toString()
     );
 
     return res.status(200).json(
-        new ApiResponse(200, {
-            topDonors: topDonors.slice(0, 5),
-            userRank: {
-                position: userPosition,
-                ...userData
-            }
-        }, "Leaderboard fetched successfully")
+      new ApiResponse(200, {
+        topDonors: topDonors.slice(0, 5),
+        userRank: {
+          position: userPosition,
+          ...userData
+        }
+      }, "Leaderboard fetched successfully")
     );
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error);
+    return res.status(500).json(new ApiResponse(500, null, "Failed to fetch leaderboard"));
+  }
 });
+
+
 
 export { addFoodItem, getFoodItems, addSingleMeal, getSingleMeals, acceptSingleMeal, rejectSingleMeal, getDonationHistory, getActiveDonation, updateDonationStatus, getActiveMeals, getUserLeaderboard, updateFoodItemStatus };
 

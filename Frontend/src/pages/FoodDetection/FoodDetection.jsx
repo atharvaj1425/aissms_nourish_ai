@@ -56,6 +56,18 @@ const FoodInventory = ({ closeModal, updateFoodItems }) => {
       return;
     }
 
+    const currentDate = new Date().toISOString().split('T')[0];
+
+    if (manufacturingDate > currentDate) {
+      toast.error('Manufacturing date cannot be ahead of the current date!');
+      return;
+    }
+
+    if (expiryDate <= currentDate || expiryDate <= manufacturingDate) {
+      toast.error('Expiry date must be greater than the current date and the manufacturing date!');
+      return;
+    }
+
     try {
       console.log("Sending data to backend:", formData);
       

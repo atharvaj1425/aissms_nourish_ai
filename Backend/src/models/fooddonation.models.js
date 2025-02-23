@@ -34,10 +34,6 @@ const foodDonationSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
-    // volunteer: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "Volunteer"
-    // },
     acceptedById: {
         type: String
     },
@@ -46,7 +42,7 @@ const foodDonationSchema = new mongoose.Schema({
     },
     status: { 
         type: String, 
-        enum: ["Pending", "Accepted", "Arrival for Pick Up", "Out for Delivery", "Delivered", "Expired"], 
+        enum: ["Pending", "Accepted", "Arrival for Pick Up", "Out for Delivery", "Delivered", "Expired", "Redistributed", "Redistribute Accepted"], 
         default: "Pending" 
     },
     otp: {
@@ -54,6 +50,11 @@ const foodDonationSchema = new mongoose.Schema({
     },
     otpExpiry: {
         type: Date,
+    },
+    redistributions: [{ type: Schema.Types.ObjectId, ref: 'VolunteerRedistribute' }],
+    review: {
+        rating: { type: Number, min: 1, max: 5 },
+        comment: { type: String }
     }
 }, {
     timestamps: true

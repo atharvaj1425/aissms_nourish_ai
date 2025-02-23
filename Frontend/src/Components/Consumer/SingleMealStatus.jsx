@@ -129,7 +129,7 @@ const SingleMealStatus = () => {
           <tbody>
             {meals.map((meal) => (
               <tr key={meal._id} className="hover:bg-gray-100">
-                <td className="py-2 px-4 border-b">{meal.mealDescription}</td>
+                <td className="py-2 px-4 border-b">{meal.foodName}</td>
                 <td className="py-2 px-4 border-b">{meal.quantity}</td>
                 <td className="py-2 px-4 border-b">{new Date(meal.schedulePickUp).toLocaleDateString()}</td>
                 <td className="py-2 px-4 border-b">{meal.pincode}</td>

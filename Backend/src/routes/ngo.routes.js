@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { acceptFoodDonation, rejectFoodDonation, donationRequest, getDonationHistory, getActiveDonation, updateDonationStatus } from "../controllers/ngo.controller.js";
+import { acceptFoodDonation, rejectFoodDonation, donationRequest, getDonationHistory, getActiveDonation, updateDonationStatus,submitReview } from "../controllers/ngo.controller.js";
 import { getAllFoodDonations } from "../controllers/ngo.controller.js";
 import { verifyNgoJWT } from "../middlewares/auth.middleware.js";
 import { verifyUserJWT } from "../middlewares/auth.middleware.js";
@@ -19,4 +19,6 @@ router.post("/:donationId/reject",verifyUserJWT, authorizeRoles("ngo"), rejectFo
 router.route("/donation-history").get(verifyUserJWT, authorizeRoles("ngo"), getDonationHistory);
 router.route("/active-donation").get(verifyUserJWT, authorizeRoles("ngo"), getActiveDonation);
 router.put('/update-status/:donationId',verifyUserJWT, authorizeRoles("ngo"), updateDonationStatus);
+router.post('/review/:donationId', verifyUserJWT, authorizeRoles("ngo"), submitReview);
+
 export default router;

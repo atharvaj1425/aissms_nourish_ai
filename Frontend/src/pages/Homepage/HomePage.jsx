@@ -6,9 +6,25 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import Google_Translate from '../../Components/Google_Translate';
 import axios from 'axios';
+import Chatbot from '../../Components/Chat-Bot/Chat-bot.jsx';
 
 // Set the app element for react-modal
 Modal.setAppElement('#root');
+const ChatbotWrapper = () => {
+  return (
+    <div
+      style={{ 
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        zIndex: 1000,
+        transition: 'all 0.3s ease'
+      }}
+    >
+      <Chatbot />
+    </div>
+  );
+};
 
 const HomePage = () => {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
@@ -69,7 +85,7 @@ const HomePage = () => {
   return (
     <div className="bg-green-100 min-h-screen flex flex-col relative w-full">
 
-
+<ChatbotWrapper/>
 
       {/* Header Section */}
       <header className="flex justify-between items-center px-3 py-2 sm:px-4 md:px-6 lg:px-8 w-full " data-aos="fade-up" data-aos-duration="1000">

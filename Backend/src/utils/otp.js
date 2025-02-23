@@ -59,11 +59,19 @@ export const generateAndSendOTP = async (donationId, role) => {
     // Ensure phone number is in the correct format
     const formattedPhoneNumber = recipient.phoneNumber.startsWith('+') ? recipient.phoneNumber : `+91${recipient.phoneNumber}`;
 
-    await client.messages.create({
-        body: `Your OTP for food donation pick up is ${otp}. Food Item: ${donation.foodName}`,
-        from: process.env.TWILIO_PHONE_NUMBER,
-        to: formattedPhoneNumber
-    });
+    try {
+        const message = await client.messages.create({
+            body: `Your OTP for food donation pick up is ${otp}. Food Item: ${donation.foodName}`,
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: formattedPhoneNumber
+        });
+        console.log(`OTP sent to ${formattedPhoneNumber}: ${message.sid}`);
+    } catch (error) {
+        console.error('Error sending OTP:', error);
+        console.error('Twilio Error Details:', error.details);
+        console.error('Twilio Error More Info:', error.moreInfo);
+        throw new Error('Failed to send OTP');
+    }
 
     return otp;
 };

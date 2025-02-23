@@ -61,6 +61,14 @@ const Form = ({ closeModal, updateFoodItems }) => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
 
+    const { expiryDate, schedulePickUp } = formData;
+    const currentDate = new Date().toISOString().split('T')[0];
+
+    if (expiryDate <= currentDate || expiryDate <= schedulePickUp) {
+      toast.error('Expiry date must be greater than the current date and the schedule pick-up date!');
+      return;
+    }
+
     const formattedData = {
       ...formData,
       expiryDate: formatDate(formData.expiryDate),

@@ -270,7 +270,20 @@ const updateDonationStatus = async (req, res) => {
     }
 };
 
-
+const submitReview = asyncHandler(async (req, res) => {
+    const { donationId } = req.params;
+    const { rating, comment } = req.body;
+  
+    const donation = await FoodDonation.findById(donationId);
+    if (!donation) {
+      throw new ApiError(404, "Donation not found");
+    }
+  
+    donation.review = { rating, comment };
+    await donation.save();
+  
+    res.status(200).json({ message: 'Review submitted successfully', data: donation });
+  });
 
 // const verifyOTP = async (donationId, otp) => {
 //     const donation = await FoodDonation.findById(donationId);
@@ -291,4 +304,4 @@ const updateDonationStatus = async (req, res) => {
 //     return true;
 // };
 
-export { getAllFoodDonations, rejectFoodDonation, acceptFoodDonation, getDonationHistory, getActiveDonation, donationRequest, updateDonationStatus, verifyOTP } 
+export { getAllFoodDonations, rejectFoodDonation, acceptFoodDonation, getDonationHistory, getActiveDonation, donationRequest, updateDonationStatus, verifyOTP, submitReview } 
