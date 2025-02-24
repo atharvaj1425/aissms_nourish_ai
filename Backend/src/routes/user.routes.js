@@ -36,4 +36,5 @@ router.get("/user-ranking",
 
 router.get('/:userId', verifyUserJWT, getUserById);
 
+
 export default router;

@@ -65,7 +65,7 @@ export const generateAndSendOTP = async (donationId, role) => {
             from: process.env.TWILIO_PHONE_NUMBER,
             to: formattedPhoneNumber
         });
-        console.log(`OTP sent to ${formattedPhoneNumber}: ${message.sid}`);
+        // console.log(`OTP sent to ${formattedPhoneNumber}: ${message.sid}`);
     } catch (error) {
         console.error('Error sending OTP:', error);
         console.error('Twilio Error Details:', error.details);
