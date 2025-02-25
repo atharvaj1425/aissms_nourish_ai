@@ -6,7 +6,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import Google_Translate from '../../Components/Google_Translate';
 import axios from 'axios';
-import Chatbot from '../../Components/Chat-Bot/Chat-Bot.jsx';
+import Chatbot from '../../Components/ChatBot/ChatBot.jsx';
 
 // Set the app element for react-modal
 Modal.setAppElement('#root');

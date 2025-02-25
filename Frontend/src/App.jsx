@@ -24,7 +24,7 @@ import Recipe_Bot from './pages/Recipe_Bot/Recipe_Bot.jsx';
 import SingleMealStatus from './Components/Consumer/SingleMealStatus.jsx';
 //import Google_Translate from './Components/Google_Translate.jsx';
 import NgoCurrentAcceptPage from './Components/NGO/ngocurrentaccept.jsx';
-import ChatBot from './Components/Chat-Bot/Chat-Bot.jsx';
+import ChatBot from './Components/ChatBot/ChatBot.jsx';
 
 
 function App() {
