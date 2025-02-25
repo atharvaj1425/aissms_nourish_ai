@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables at the very beginning
 
+const PORT = process.env.PORT || 3000;
+
 import { app } from './app.js';
 import { connectDB } from './db/db.js';
 
