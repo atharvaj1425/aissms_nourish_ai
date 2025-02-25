@@ -1,4 +1,4 @@
-export const authorizeRoles = (...allowedRoles) => {
+const authorizeRoles = (...allowedRoles) => {
     return (req, res, next) => {
         console.log(`Checking Role: ${req.user.role} | Allowed Roles: ${allowedRoles.join(", ")}`);
 
@@ -10,7 +10,7 @@ export const authorizeRoles = (...allowedRoles) => {
         next();
     };
 };
-
+export { authorizeRoles };
 
 //add middleware as authorizeRoles("user, ngo, volunteer, restaurant")
 
