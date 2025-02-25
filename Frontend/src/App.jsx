@@ -30,7 +30,6 @@ import ChatBot from './Components/ChatBot/ChatBot.jsx';
 function App() {
   return (
     <Router>
-      
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/consumer/getSingleMeal" element={<GetSingleMeal />} />
