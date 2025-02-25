@@ -9,7 +9,7 @@ const DeliveryStatusPage = () => {
   useEffect(() => {
     const fetchDeliveryStatus = async () => {
       try {
-        const response = await axios.get("/api/v1/restaurants/deliveryStatus", { withCredentials: true });
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/restaurants/deliveryStatus`, { withCredentials: true });
         if (response.data.success) {
           // Sort data based on latest pick-up date
           const sortedData = response.data.data.sort(
