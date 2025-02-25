@@ -8,6 +8,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { generateAndSendOTP, verifyOTP } from '../utils/otp.js';
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const generateAccessToken = async(userId) => {
     try{
@@ -103,6 +104,11 @@ export const getUserById = async (req, res) => {
 // });
 
 const getFoodItems = asyncHandler(async (req, res) => {
+    // Verify authentication
+    if (!req.user?._id) {
+        throw new ApiError(401, "Unauthorized request");
+    }
+    
     const userId = req.user._id;
 
     const foodItems = await FoodItem.find({ user: userId });
@@ -348,33 +354,43 @@ const rejectSingleMeal = asyncHandler(async (req, res) => {
 });
 
 const getDonationHistory = asyncHandler(async (req, res) => {
-    const userId = req.user._id;
-    const { status } = req.query;
-
-    if (!userId) {
-        throw new ApiError(400, "User ID is required");
+    // Verify authentication
+    if (!req.user?._id) {
+        throw new ApiError(401, "Unauthorized request");
     }
 
-    // Check if the user exists
-    const user = await User.findById(userId);
-    if (!user) {
-        throw new ApiError(404, "User not found");
+    try {
+        const userId = req.user._id;
+        const { status } = req.query;
+
+        const query = { donor: userId };
+        if (status) {
+            query.status = status;
+        }
+
+        const donationHistory = await SingleMeal.find(query)
+            .populate("donor", "name")
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json(
+            new ApiResponse(
+                200, 
+                donationHistory, 
+                "Donation history fetched successfully"
+            )
+        );
+    } catch (error) {
+        console.error("Error fetching donation history:", error);
+        throw new ApiError(500, "Failed to fetch donation history");
     }
-
-    // Fetch all donations created by the user with the specified status
-    const query = { donor: userId };
-    if (status) {
-        query.status = status;
-    }
-
-    const donationHistory = await SingleMeal.find(query)
-        .populate("donor", "name")
-        .sort({ createdAt: -1 });
-
-    return res.status(200).json(new ApiResponse(200, donationHistory, "Donation history fetched successfully"));
 });
 
 const getActiveDonation = asyncHandler(async (req, res) => {
+    // Verify authentication
+    if (!req.user?._id) {
+        throw new ApiError(401, "Unauthorized request");
+    }
+
     const userId = req.user._id;
 
     if (!userId) {
