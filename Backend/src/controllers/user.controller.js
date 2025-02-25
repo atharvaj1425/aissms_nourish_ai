@@ -347,32 +347,32 @@ const rejectSingleMeal = asyncHandler(async (req, res) => {
     );
 });
 
-// const getDonationHistory = asyncHandler(async (req, res) => {
-//     const userId = req.user._id;
-//     const { status } = req.query;
+const getDonationHistory = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const { status } = req.query;
 
-//     if (!userId) {
-//         throw new ApiError(400, "User ID is required");
-//     }
+    if (!userId) {
+        throw new ApiError(400, "User ID is required");
+    }
 
-//     // Check if the user exists
-//     const user = await User.findById(userId);
-//     if (!user) {
-//         throw new ApiError(404, "User not found");
-//     }
+    // Check if the user exists
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
 
-//     // Fetch all donations created by the user with the specified status
-//     const query = { donor: userId };
-//     if (status) {
-//         query.status = status;
-//     }
+    // Fetch all donations created by the user with the specified status
+    const query = { donor: userId };
+    if (status) {
+        query.status = status;
+    }
 
-//     const donationHistory = await SingleMeal.find(query)
-//         .populate("donor", "name")
-//         .sort({ createdAt: -1 });
+    const donationHistory = await SingleMeal.find(query)
+        .populate("donor", "name")
+        .sort({ createdAt: -1 });
 
-//     return res.status(200).json(new ApiResponse(200, donationHistory, "Donation history fetched successfully"));
-// });
+    return res.status(200).json(new ApiResponse(200, donationHistory, "Donation history fetched successfully"));
+});
 
 const getActiveDonation = asyncHandler(async (req, res) => {
     const userId = req.user._id;
@@ -547,6 +547,6 @@ const getUserLeaderboard = asyncHandler(async (req, res) => {
 
 
 
-export { addFoodItem, getFoodItems, addSingleMeal, getSingleMeals, acceptSingleMeal, rejectSingleMeal, getActiveDonation, updateDonationStatus, getActiveMeals, getUserLeaderboard, updateFoodItemStatus };
+export { addFoodItem, getFoodItems, addSingleMeal, getSingleMeals, acceptSingleMeal, rejectSingleMeal, getActiveDonation, updateDonationStatus, getActiveMeals, getUserLeaderboard, updateFoodItemStatus, getDonationHistory };
 
 
