@@ -175,7 +175,7 @@ const VolunteerCurrentDonation = () => {
 
   useEffect(() => {
     axios
-      .get("/api/v1/volunteers/active-donation")
+      .get(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/active-donation`)
       .then((response) => {
         if (response.data && response.data.data) {
           setDonation(response.data.data);
@@ -213,7 +213,7 @@ const VolunteerCurrentDonation = () => {
     if (!donation) return;
 
     try {
-      const restaurantResponse = await axios.get(`/api/v1/users/${donation.restaurantUser}`, {
+      const restaurantResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/${donation.restaurantUser}`, {
         withCredentials: true,
       });
 
@@ -249,7 +249,7 @@ const VolunteerCurrentDonation = () => {
     if (!donation) return;
     setUpdating(true);
     try {
-      const response = await axios.put(`/api/v1/volunteers/update-status/${donation._id}`, {
+      const response = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/update-status/${donation._id}`, {
         status: newStatus,
         otp: newStatus === 'Out for Delivery' ? otp : undefined,
         role: 'volunteer', // Pass the role parameter
@@ -273,7 +273,7 @@ const VolunteerCurrentDonation = () => {
     event.preventDefault();
     setUpdating(true);
     try {
-      const response = await axios.post(`/api/v1/volunteers/update-delivery-status/${donation._id}`, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/update-delivery-status/${donation._id}`, {
         remainingQuantity,
         currentLocation,
       });

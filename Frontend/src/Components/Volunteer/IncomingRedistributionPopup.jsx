@@ -7,7 +7,7 @@ const IncomingRedistributionPopup = ({ show, onClose }) => {
 
   useEffect(() => {
     if (show) {
-      axios.get('/api/v1/volunteers/incoming-redistributions')
+      axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/incoming-redistributions`)
         .then(response => {
           setRedistributions(response.data);
         })
@@ -36,7 +36,7 @@ const IncomingRedistributionPopup = ({ show, onClose }) => {
 
   const handleAccept = async (redistributionId) => {
     try {
-      await axios.post(`/api/v1/volunteers/accept-redistribution/${redistributionId}`, { currentLocation });
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/accept-redistribution/${redistributionId}`, { currentLocation });
       alert('Redistribution accepted successfully');
       onClose();
     } catch (error) {
@@ -47,7 +47,7 @@ const IncomingRedistributionPopup = ({ show, onClose }) => {
 
   const handleDelivered = async (redistributionId) => {
     try {
-      await axios.post(`/api/v1/volunteers/update-redistribution-status/${redistributionId}/delivered`);
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/update-redistribution-status/${redistributionId}/delivered`);
       alert('Redistribution status updated to Delivered successfully');
       onClose();
     } catch (error) {

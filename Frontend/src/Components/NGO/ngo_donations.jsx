@@ -16,7 +16,7 @@ const NGO = () => {
           throw new Error("Ngo ID not found in local storage");
         }
 
-        const response = await axios.get(`/api/v1/ngos/getDonations?ngoId=${ngoId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/ngos/getDonations?ngoId=${ngoId}`, {
           withCredentials: true,
         });
         setFoodDonations(response.data.data); // Assuming APIResponse sends data in 'data' key
@@ -35,7 +35,7 @@ const NGO = () => {
         throw new Error("Volunteer ID not found in local storage");
       }
   
-      const response = await axios.post(`/api/v1/ngos/${donationId}/accept`, { ngoId }, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/ngos/${donationId}/accept`, { ngoId }, {
         withCredentials: true,
       });
       toast.success("Food donation accepted successfully!");
@@ -48,7 +48,7 @@ const NGO = () => {
 
   const handleReject = async (donationId) => {
     try {
-      const response = await axios.post(`/api/v1/ngos/${donationId}/reject`, {}, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/ngos/${donationId}/reject`, {}, {
         withCredentials: true,
       });
       toast.success("Food donation rejected successfully!");

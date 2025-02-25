@@ -9,7 +9,7 @@ const ReviewPopup = ({ show, onClose, donationId }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post(`/api/v1/ngos/review/${donationId}`, { rating, comment });
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/ngos/review/${donationId}`, { rating, comment });
       toast.success('Review submitted successfully');
       onClose();
     } catch (error) {

@@ -9,7 +9,7 @@ const Header_1 = () => {
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
-        const response = await axios.get("/api/v1/users/getFoodItems", {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/getFoodItems`, {
           withCredentials: true,
         });
         const items = response.data.data || [];

@@ -11,7 +11,7 @@ const Header_1 = () => {
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
-        const response = await axios.get("/api/v1/volunteers/getFoodItems", {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/getFoodItems`, {
           withCredentials: true,
         });
         const items = response.data.data || [];
@@ -36,7 +36,7 @@ const Header_1 = () => {
 
     const fetchDonationHistory = async () => {
       try {
-        const response = await axios.get("/api/v1/volunteers/donation-history", {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/donation-history`, {
           withCredentials: true,
         });
         const donations = response.data.data || [];

@@ -7,7 +7,7 @@ const RedistributionHistoryPopup = ({ show, onClose }) => {
 
   useEffect(() => {
     if (show) {
-      axios.get('/api/v1/volunteers/redistribution-history')
+      axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/redistribution-history`)
         .then(response => {
           setHistory(response.data);
           setLoading(false);

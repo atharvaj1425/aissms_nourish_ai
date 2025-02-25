@@ -71,7 +71,7 @@ const FoodInventory = ({ closeModal }) => {
     }
 
     try {
-      await axios.post("/api/v1/users/addFoodItem", formData);
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/users/addFoodItem`, formData);
       
       toast.success('Food item added successfully!');
       

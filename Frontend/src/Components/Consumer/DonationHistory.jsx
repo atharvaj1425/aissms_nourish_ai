@@ -23,9 +23,9 @@ const DonationHistory = ({ onClose }) => {
     AOS.init({ duration: 800, once: true });
     const fetchDonations = async () => {
       try {
-        const response = await axios.get("/api/v1/users/donation-history", {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/donation-history`, {
           withCredentials: true,
-        });
+        });        
         setDonations(response.data.data);
       } catch (err) {
         setError("Failed to load donation history");

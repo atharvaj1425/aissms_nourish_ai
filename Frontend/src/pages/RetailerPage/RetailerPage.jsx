@@ -35,7 +35,7 @@ const RetailerPage = () => {
     // Fetch the latest delivery status
     const fetchLatestDeliveryStatus = async () => {
       try {
-        const response = await axios.get("/api/v1/restaurants/deliveryStatus", {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/restaurants/deliveryStatus`, {
           withCredentials: true,
         });
 

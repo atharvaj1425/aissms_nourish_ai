@@ -80,7 +80,7 @@ const GetSingleMeal = () => {
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        const response = await axios.get('/api/v1/users/getMeal');
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/getMeal`);
         if (response.data && response.data.data) {
           setMeals(response.data.data);
           console.log(response.data.data);
@@ -105,7 +105,7 @@ const GetSingleMeal = () => {
         throw new Error("User ID not found in local storage");
       }
 
-      const response = await axios.post(`/api/v1/users/meals/${mealId}/accept`, { userId }, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/users/meals/${mealId}/accept`, { userId }, {
         withCredentials: true,
       });
       toast.success("Meal accepted successfully!");
@@ -118,7 +118,7 @@ const GetSingleMeal = () => {
 
   const handleReject = async (mealId) => {
     try {
-      const response = await axios.post(`/api/v1/users/meals/${mealId}/reject`, {}, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/users/meals/${mealId}/reject`, {}, {
         withCredentials: true,
       });
       toast.success("Meal rejected successfully!");

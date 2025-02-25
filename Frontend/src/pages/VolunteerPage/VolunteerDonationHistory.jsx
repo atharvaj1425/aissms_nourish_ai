@@ -7,7 +7,7 @@ const DonationHistory = () => {
 
   useEffect(() => {
     axios
-      .get("/api/v1/volunteers/donation-history") // Replace with actual API endpoint
+      .get(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/donation-history`) // Replace with actual API endpoint
       .then((response) => {
         setDonations(response.data.data);
         setLoading(false);

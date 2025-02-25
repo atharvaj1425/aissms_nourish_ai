@@ -11,7 +11,7 @@ const NgoCurrentAcceptPage = () => {
 
   useEffect(() => {
     axios
-      .get("/api/v1/ngos/active-donation")
+      .get(`${import.meta.env.VITE_BASE_URL}/api/v1/ngos/active-donation`)
       .then((response) => {
         if (response.data && response.data.data) {
           setDonation(response.data.data);
@@ -32,10 +32,10 @@ const NgoCurrentAcceptPage = () => {
     if (!donation) return;
 
     try {
-      const ngoResponse = await axios.get(`/api/v1/users/${donation.acceptedById}`, {
+      const ngoResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/${donation.acceptedById}`, {
         withCredentials: true,
       });
-      const restaurantResponse = await axios.get(`/api/v1/users/${donation.restaurantUser}`, {
+      const restaurantResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/${donation.restaurantUser}`, {
         withCredentials: true,
       });
 
@@ -57,7 +57,7 @@ const NgoCurrentAcceptPage = () => {
     if (!donation) return;
     setUpdating(true);
     try {
-      const response = await axios.put(`/api/v1/ngos/update-status/${donation._id}`, {
+      const response = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/v1/ngos/update-status/${donation._id}`, {
         status: newStatus,
         otp: newStatus === 'Out for Delivery' ? otp : undefined,
         role: 'ngo'

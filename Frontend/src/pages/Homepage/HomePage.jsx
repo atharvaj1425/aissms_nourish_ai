@@ -69,8 +69,8 @@ const HomePage = () => {
     const fetchLeaderboardData = async () => {
       try {
         const [donorsResponse, restaurantsResponse] = await Promise.all([
-          axios.get('/api/v1/leaderboard/top-individual-donors'),
-          axios.get('/api/v1/leaderboard/top-restaurant-donors')
+          axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/leaderboard/top-individual-donors`),
+          axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/leaderboard/top-restaurant-donors`)
         ]);
         setTopDonors(donorsResponse.data.data);
         setTopRestaurants(restaurantsResponse.data.data);

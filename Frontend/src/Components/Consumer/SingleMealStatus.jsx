@@ -12,7 +12,7 @@ const SingleMealStatus = () => {
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        const response = await axios.get('/api/v1/users/active-meals', {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/active-meals`, {
           withCredentials: true,
         });
         setMeals(response.data.data);
@@ -30,7 +30,7 @@ const SingleMealStatus = () => {
   const updateStatus = async (mealId, newStatus) => {
     setUpdating(true);
     try {
-      const response = await axios.put(`/api/v1/users/update-status/${mealId}`, {
+      const response = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/v1/users/update-status/${mealId}`, {
         status: newStatus,
         otp: newStatus === 'Out for Delivery' ? otp : undefined,
         role: 'individual'
@@ -49,7 +49,7 @@ const SingleMealStatus = () => {
 
   const handleAccept = async (mealId) => {
     try {
-      const response = await axios.post(`/api/v1/users/meals/${mealId}/accept`, {}, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/users/meals/${mealId}/accept`, {}, {
         withCredentials: true,
       });
       toast.success("Meal accepted successfully!");
@@ -62,7 +62,7 @@ const SingleMealStatus = () => {
 
   const handleReject = async (mealId) => {
     try {
-      const response = await axios.post(`/api/v1/users/meals/${mealId}/reject`, {}, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/users/meals/${mealId}/reject`, {}, {
         withCredentials: true,
       });
       toast.success("Meal rejected successfully!");
@@ -77,7 +77,7 @@ const SingleMealStatus = () => {
     if (!meal) return;
 
     try {
-      const donorResponse = await axios.get(`/api/v1/users/${meal.donor._id}`, {
+      const donorResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/${meal.donor._id}`, {
         withCredentials: true,
       });
 

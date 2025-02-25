@@ -9,7 +9,7 @@ const SingleMealStatus = () => {
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        const response = await axios.get('/api/v1/users/active-meals', {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/active-meals`, {
           withCredentials: true,
         });
         setMeals(response.data.data);
@@ -27,7 +27,7 @@ const SingleMealStatus = () => {
   const updateStatus = async (mealId, newStatus) => {
     setUpdating(true);
     try {
-      await axios.put(`/api/v1/users/update-status/${mealId}`, {
+      await axios.put(`${import.meta.env.VITE_BASE_URL}/api/v1/users/update-status/${mealId}`, {
         status: newStatus,
       });
       setMeals(meals.map(meal => meal._id === mealId ? { ...meal, status: newStatus } : meal));

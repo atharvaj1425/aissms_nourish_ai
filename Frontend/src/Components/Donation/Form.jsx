@@ -77,7 +77,7 @@ const Form = ({ closeModal, updateFoodItems }) => {
 
     try {
       const response = await axios.post(
-        "/api/v1/restaurants/donateFood",
+        `${import.meta.env.VITE_BASE_URL}/api/v1/restaurants/donateFood`,
         formattedData,
         { withCredentials: true }
       );

@@ -56,7 +56,7 @@ const DonateSingleMeal = ({ closeModal }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('/api/v1/users/addMeal', formData, {
+            await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/users/addMeal`, formData, {
                 credentials: true
             });
             toast.success('Food item added successfully!');

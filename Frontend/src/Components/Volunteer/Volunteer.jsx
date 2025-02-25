@@ -15,7 +15,7 @@ const Volunteer = () => {
           throw new Error("Volunteer ID not found in local storage");
         }
 
-        const response = await axios.get(`/api/v1/volunteers/getDonations?volunteerId=${volunteerId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/getDonations?volunteerId=${volunteerId}`, {
           withCredentials: true,
         });
         setFoodDonations(response.data.data);
@@ -36,7 +36,7 @@ const Volunteer = () => {
         throw new Error("Volunteer ID not found in local storage");
       }
   
-      const response = await axios.post(`/api/v1/volunteers/${donationId}/accept`, { volunteerId }, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/${donationId}/accept`, { volunteerId }, {
         withCredentials: true,
       });
       toast.success("Food donation accepted successfully!");
@@ -49,7 +49,7 @@ const Volunteer = () => {
 
   const handleReject = async (donationId) => {
     try {
-      const response = await axios.post(`/api/v1/volunteers/${donationId}/reject`, {}, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/volunteers/${donationId}/reject`, {}, {
         withCredentials: true,
       });
       toast.success("Food donation rejected successfully!");

@@ -9,7 +9,7 @@ const Header_1 = ({ accessToken }) => {
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
-        const response = await axios.get("/api/v1/restaurants/getFoodItems", {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/restaurants/getFoodItems`, {
           headers: { Authorization: `Bearer ${accessToken}` },
           withCredentials: true,
         });
@@ -37,7 +37,7 @@ const Header_1 = ({ accessToken }) => {
 
     const fetchWastePrevented = async () => {
       try {
-        const response = await axios.get("/api/v1/restaurants/donationHistory", {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/restaurants/donationHistory`, {
           headers: { Authorization: `Bearer ${accessToken}` },
           withCredentials: true,
         });

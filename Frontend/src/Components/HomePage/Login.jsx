@@ -102,7 +102,7 @@ const Login = ({ closeModal }) => {
         const userData = { email: formData.email, password: formData.password };
 
         try {
-            const response = await axios.post("/api/v1/auth/login", userData);
+            const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/auth/login`, userData);
             console.log(response);
 
             if (response.status === 200) {
@@ -198,7 +198,7 @@ const Login = ({ closeModal }) => {
     
             console.log("Sending registration request...");
             
-            const response = await axios.post("/api/v1/auth/register", formDataToSend, {
+            const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/auth/register`, formDataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
