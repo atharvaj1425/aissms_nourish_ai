@@ -5,10 +5,8 @@ import { FoodItem } from "../models/foodItems.models.js"
 import { SingleMeal } from "../models/singleMeal.models.js";
 //import { uploadToCloudinary  } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
 import { generateAndSendOTP, verifyOTP } from '../utils/otp.js';
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+
 
 const generateAccessToken = async(userId) => {
     try{
