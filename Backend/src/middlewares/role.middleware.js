@@ -1,11 +1,16 @@
 export const authorizeRoles = (...allowedRoles) => {
     return (req, res, next) => {
-        if(!allowedRoles.includes(req.user.role)) {
-            return res.status(403).json({ message: "access denied"})
+        console.log(`Checking Role: ${req.user.role} | Allowed Roles: ${allowedRoles.join(", ")}`);
+
+        if (!allowedRoles.includes(req.user.role)) {
+            console.error("Access Denied: User Role Not Allowed");
+            return res.status(403).json({ message: "Access Denied" });
         }
+
         next();
-    }
-}
+    };
+};
+
 
 //add middleware as authorizeRoles("user, ngo, volunteer, restaurant")
 

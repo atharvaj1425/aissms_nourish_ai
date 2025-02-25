@@ -14,18 +14,27 @@ const Consumer = () => {
 
   const fetchFoodItems = async () => {
     try {
-      console.log("Fetching food items...");
-      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/getFoodItems`, {
-        withCredentials: true,
-      });
-      
-      console.log("Received food items:", response.data);
-      setFoodItems(response.data.data);
+        console.log("Fetching food items...");
+        console.log("Cookies before request:", document.cookie);
+
+        const response = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/api/v1/users/getFoodItems`,
+            {
+                withCredentials: true, // Ensures cookies are sent
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Explicitly send token
+                },
+            }
+        );
+
+        console.log("Received food items:", response.data);
+        setFoodItems(response.data.data);
     } catch (err) {
-      console.error("Failed to fetch food items:", err);
-      toast.error("Failed to fetch food items");
+        console.error("Failed to fetch food items:", err);
+        toast.error("Failed to fetch food items");
     }
-  };
+};
+
 
   const handleUseItemClick = (item) => {
     setSelectedItem(item);

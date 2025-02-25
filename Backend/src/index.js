@@ -9,7 +9,7 @@ import { connectDB } from './db/db.js';
 console.log(`Twilio Account SID: ${process.env.TWILIO_ACCOUNT_SID}`);
 console.log(`Twilio Auth Token: ${process.env.TWILIO_AUTH_TOKEN ? 'Loaded' : 'Not Loaded'}`);
 console.log(`Twilio Phone Number: ${process.env.TWILIO_PHONE_NUMBER}`);
-
+console.log("CORS_ORIGIN:", process.env.CORS_ORIGIN);
 // Verify Cloudinary config
 console.log('Environment variables loaded:', {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
