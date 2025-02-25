@@ -17,7 +17,14 @@ console.log('Environment variables loaded:', {
 
 // Connect to database (Optional: If needed before requests)
 connectDB()
-    .then(() => console.log("Database connected successfully"))
+    .then(() => {
+        console.log("Database connected successfully");
+
+        // ✅ Start the server AFTER database connection
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    })
     .catch(error => {
         console.error('Database connection error:', error);
         process.exit(1);
