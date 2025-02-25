@@ -1,5 +1,5 @@
 import { Volunteer } from "../models/volunteer.models.js";
-import { verifyVolunteerJWT } from "../middlewares/auth.middleware.js";
+
 import { verifyUserJWT } from "../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../middlewares/role.middleware.js";
 import {  getAllFoodDonations, rejectFoodDonation, acceptFoodDonation, getActiveDonation, getDonationHistory, updateDonationStatus, updateDeliveryStatusWithRemainingQuantity } from "../controllers/volunteer.controller.js"

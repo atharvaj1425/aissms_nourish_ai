@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { acceptFoodDonation, rejectFoodDonation, donationRequest, getDonationHistory, getActiveDonation, updateDonationStatus,submitReview } from "../controllers/ngo.controller.js";
 import { getAllFoodDonations } from "../controllers/ngo.controller.js";
-import { verifyNgoJWT } from "../middlewares/auth.middleware.js";
+
 import { verifyUserJWT } from "../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../middlewares/role.middleware.js";
 const router = Router();
