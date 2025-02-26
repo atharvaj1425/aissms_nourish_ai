@@ -24,7 +24,7 @@ const NavBar = () => {
 
     const checkActiveDonation = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/getActiveDonation`, {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/active-donation`, {
           withCredentials: true,
         });
         setActiveDonationExists(!!response.data.data);

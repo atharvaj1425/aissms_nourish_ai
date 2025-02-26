@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import ReviewPopup from './ReviewPopup.jsx'; // Import the ReviewPopup component
 
 const NgoCurrentAcceptPage = () => {
   const [donation, setDonation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [otp, setOtp] = useState('');
-  const [showReviewPopup, setShowReviewPopup] = useState(false);
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_BASE_URL}/api/v1/ngos/active-donation`)
+      .get("/api/v1/ngos/active-donation")
       .then((response) => {
-        if (response.data && response.data.data) {
+        if (response.data && response.data.data && Object.keys(response.data.data).length > 0) {
           setDonation(response.data.data);
         } else {
-          console.error("Invalid data format:", response.data);
+          console.warn("No active donation found.");
           setDonation(null);
         }
         setLoading(false);
@@ -32,19 +30,17 @@ const NgoCurrentAcceptPage = () => {
     if (!donation) return;
 
     try {
-      const ngoResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/${donation.acceptedById}`, {
-        withCredentials: true,
-      });
-      const restaurantResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/${donation.restaurantUser}`, {
-        withCredentials: true,
-      });
+      const ngoResponse = await axios.get(`/api/v1/users/${donation.acceptedById}`, { withCredentials: true });
+      const restaurantResponse = await axios.get(`/api/v1/users/${donation.restaurantUser}`, { withCredentials: true });
+
+      if (!ngoResponse.data?.location || !restaurantResponse.data?.location) {
+        alert("Location data is missing.");
+        return;
+      }
 
       const ngoLocation = ngoResponse.data.location;
       const restaurantLocation = restaurantResponse.data.location;
-      console.log("NGO Location:");
-      console.log(ngoLocation);
-      console.log("Restaurant Location:");
-      console.log(restaurantLocation);
+
       const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${ngoLocation.latitude},${ngoLocation.longitude}&destination=${restaurantLocation.latitude},${restaurantLocation.longitude}`;
       window.open(googleMapsUrl, "_blank");
     } catch (error) {
@@ -57,17 +53,16 @@ const NgoCurrentAcceptPage = () => {
     if (!donation) return;
     setUpdating(true);
     try {
-      const response = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/v1/ngos/update-status/${donation._id}`, {
+      const response = await axios.put(`/api/v1/ngos/update-status/${donation._id}`, {
         status: newStatus,
         otp: newStatus === 'Out for Delivery' ? otp : undefined,
         role: 'ngo'
       });
-      setDonation({ ...donation, status: newStatus });
-      if (newStatus === 'Arrival for Pick Up') {
+
+      setDonation((prev) => (prev ? { ...prev, status: newStatus } : null));
+
+      if (newStatus === 'Arrival for Pick Up' && response.data?.otp) {
         alert(`OTP sent: ${response.data.otp}`);
-      }
-      if (newStatus === 'Delivered') {
-        setShowReviewPopup(true);
       }
     } catch (error) {
       console.error("Error updating status:", error);
@@ -146,10 +141,7 @@ const NgoCurrentAcceptPage = () => {
           </tbody>
         </table>
       ) : (
-        <div>No donation data available.</div>
-      )}
-      {donation && (
-        <ReviewPopup show={showReviewPopup} onClose={() => setShowReviewPopup(false)} donationId={donation._id} />
+        <div>No active donation available.</div>
       )}
     </div>
   );

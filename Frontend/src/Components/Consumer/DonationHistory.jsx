@@ -25,9 +25,10 @@ const DonationHistory = ({ onClose }) => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/donation-history`, {
           withCredentials: true,
-        });        
-        setDonations(response.data.data);
-      } catch (err) {
+        });
+        setDonations(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching donation history:", error);
         setError("Failed to load donation history");
       } finally {
         setLoading(false);
@@ -37,18 +38,27 @@ const DonationHistory = ({ onClose }) => {
     fetchDonations();
   }, []);
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-xl font-semibold">
-        Loading donation history...
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
       </div>
     );
-  if (error)
+  }
+
+  if (!donations.length) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-red-500 text-lg font-bold">
-        {error}
+      <div className="flex flex-col items-center justify-center min-h-[200px] p-4 text-center">
+        <div className="text-gray-500 mb-4">
+          <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-semibold mb-2">No Donation History</h3>
+        <p className="text-gray-600">You haven't made any donations yet.</p>
       </div>
     );
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -68,48 +78,48 @@ const DonationHistory = ({ onClose }) => {
         </div>
 
         {/* Table */}
-        {donations.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-300 border-collapse rounded-lg shadow-md">
-              <thead>
-                <tr className="bg-gray-100 text-gray-700">
-                  <th className="py-3 px-4 border-b text-left">Meal Description</th>
-                  <th className="py-3 px-4 border-b text-left">Quantity</th>
-                  <th className="py-3 px-4 border-b text-left">Pick-up Date</th>
-                  <th className="py-3 px-4 border-b text-left">Pincode</th>
-                  <th className="py-3 px-4 border-b text-left">Status</th>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Food Name</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {donations.map((donation) => (
+                <tr key={donation._id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 whitespace-nowrap">{donation.foodName}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">{donation.quantity}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(donation.status)}`}>
+                      {donation.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {new Date(donation.schedulePickUp).toLocaleDateString()}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {donations.map((donation) => (
-                  <tr
-                    key={donation._id}
-                    className="hover:bg-gray-50 transition duration-300"
-                  >
-                    <td className="py-3 px-4 border-b">{donation.foodName}</td>
-                    <td className="py-3 px-4 border-b">{donation.quantity}</td>
-                    <td className="py-3 px-4 border-b">
-                      {new Date(donation.schedulePickUp).toLocaleDateString()}
-                    </td>
-                    <td className="py-3 px-4 border-b">{donation.pincode}</td>
-                    <td className="py-3 px-4 border-b flex items-center space-x-2">
-                      {statusIcons[donation.status]?.icon}
-                      <span>{statusIcons[donation.status]?.label}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="text-gray-600 text-center mt-4">
-            No donation history available.
-          </div>
-        )}
+              ))}
+            </tbody>
+          </table>
+        </div>
         <ToastContainer />
       </div>
     </div>
   );
+};
+
+const getStatusColor = (status) => {
+  const colors = {
+    "Pending": "bg-yellow-100 text-yellow-800",
+    "Accepted": "bg-blue-100 text-blue-800",
+    "Delivered": "bg-green-100 text-green-800",
+    "Cancelled": "bg-red-100 text-red-800",
+  };
+  return colors[status] || "bg-gray-100 text-gray-800";
 };
 
 export default DonationHistory;

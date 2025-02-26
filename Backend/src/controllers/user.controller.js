@@ -351,8 +351,35 @@ const rejectSingleMeal = asyncHandler(async (req, res) => {
     );
 });
 
+const getActiveDonation = asyncHandler(async (req, res) => {
+    if (!req.user?._id) {
+        throw new ApiError(401, "Unauthorized request");
+    }
+
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    // Fetch the active donation for the user
+    const activeDonation = await SingleMeal.findOne({
+        donor: userId,
+        status: { $in: ["Accepted", "Out for Delivery"] },
+    }).populate("donor", "name").populate("acceptedBy", "name");
+
+    // Return empty data instead of throwing error
+    return res.status(200).json(
+        new ApiResponse(
+            200, 
+            activeDonation || null, 
+            activeDonation ? "Active donation fetched successfully" : "No active donation found"
+        )
+    );
+});
+
 const getDonationHistory = asyncHandler(async (req, res) => {
-    // Verify authentication
     if (!req.user?._id) {
         throw new ApiError(401, "Unauthorized request");
     }
@@ -373,8 +400,8 @@ const getDonationHistory = asyncHandler(async (req, res) => {
         return res.status(200).json(
             new ApiResponse(
                 200, 
-                donationHistory, 
-                "Donation history fetched successfully"
+                donationHistory || [], 
+                donationHistory.length ? "Donation history fetched successfully" : "No donation history found"
             )
         );
     } catch (error) {
@@ -382,38 +409,6 @@ const getDonationHistory = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Failed to fetch donation history");
     }
 });
-
-const getActiveDonation = asyncHandler(async (req, res) => {
-    // Verify authentication
-    if (!req.user?._id) {
-        throw new ApiError(401, "Unauthorized request");
-    }
-
-    const userId = req.user._id;
-
-    if (!userId) {
-        throw new ApiError(400, "User ID is required");
-    }
-
-    // Check if the user exists
-    const user = await User.findById(userId);
-    if (!user) {
-        throw new ApiError(404, "User not found");
-    }
-
-    // Fetch the active donation for the user
-    const activeDonation = await SingleMeal.findOne({
-        donor: userId,
-        status: { $in: ["Accepted", "Out for Delivery"] },
-    }).populate("donor", "name").populate("acceptedBy", "name");
-
-    if (!activeDonation) {
-        throw new ApiError(404, "No active donation found");
-    }
-
-    return res.status(200).json(new ApiResponse(200, activeDonation, "Active donation fetched successfully"));
-});
-
 
 const updateDonationStatus = asyncHandler(async (req, res) => {
     const { donationId } = req.params; // Get the donation ID from the URL parameters

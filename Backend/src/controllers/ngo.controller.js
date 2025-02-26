@@ -173,35 +173,33 @@ const getDonationHistory = asyncHandler(async(req, res) => {
     return res.status(200).json(new ApiResponse(200, donationHistory, "Donation history fetched successfully"));
 })
 
-const getActiveDonation = asyncHandler(async(req, res) => {
-    const ngoId  = req.user._id;
+const getActiveDonation = asyncHandler(async (req, res) => {
+    const ngoId = req.user._id;
 
     if (!ngoId) {
-        throw new ApiError(400, "ngo ID is required");
+        return res.status(400).json(new ApiResponse(400, {}, "NGO ID is required"));
     }
 
-    // Check if the volunteer exists
+    // Check if the NGO exists
     const ngo = await User.findById(ngoId);
     if (!ngo) {
-        throw new ApiError(404, "ngo not found");
+        return res.status(404).json(new ApiResponse(404, {}, "NGO not found"));
     }
-    // Fetch the active donation for the volunteer
+
+    // Fetch the active donation
     const activeDonation = await FoodDonation.findOne({
         acceptedById: ngoId,
         status: { $in: ["Accepted", "Out for Delivery"] },
-    })
-    // .populate("restaurantUser", "name");
+    });
 
+    // Return an empty object if no active donation is found
     if (!activeDonation) {
-        throw new ApiError(404, "No active donation found");
+        return res.status(200).json(new ApiResponse(200, {}, "No active donation found"));
     }
-    // // Fetch all donations accepted by the volunteer
-    // const donationHistory = await FoodDonation.find({ acceptedById: volunteerId, })
-    //     .populate("restaurantUser", "name")
-    //     .sort({ createdAt: -1 });
 
-    return res.status(200).json(new ApiResponse(200, activeDonation, "Donation history fetched successfully"));
-})
+    return res.status(200).json(new ApiResponse(200, activeDonation, "Active donation fetched successfully"));
+});
+
 
 // const updateDonationStatus = async (req, res) => {
 //     const { donationId } = req.params; // Get the donation ID from the URL parameters
@@ -270,20 +268,7 @@ const updateDonationStatus = async (req, res) => {
     }
 };
 
-const submitReview = asyncHandler(async (req, res) => {
-    const { donationId } = req.params;
-    const { rating, comment } = req.body;
-  
-    const donation = await FoodDonation.findById(donationId);
-    if (!donation) {
-      throw new ApiError(404, "Donation not found");
-    }
-  
-    donation.review = { rating, comment };
-    await donation.save();
-  
-    res.status(200).json({ message: 'Review submitted successfully', data: donation });
-  });
+
 
 // const verifyOTP = async (donationId, otp) => {
 //     const donation = await FoodDonation.findById(donationId);
@@ -304,4 +289,4 @@ const submitReview = asyncHandler(async (req, res) => {
 //     return true;
 // };
 
-export { getAllFoodDonations, rejectFoodDonation, acceptFoodDonation, getDonationHistory, getActiveDonation, donationRequest, updateDonationStatus, verifyOTP, submitReview } 
+export { getAllFoodDonations, rejectFoodDonation, acceptFoodDonation, getDonationHistory, getActiveDonation, donationRequest, updateDonationStatus, verifyOTP } 

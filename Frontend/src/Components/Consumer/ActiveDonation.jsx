@@ -12,7 +12,7 @@ import {
 const statusStages = ['Pending', 'Accepted', 'Out for Delivery', 'Delivered'];
 
 const ActiveDonation = ({ onClose }) => {
-  const [donation, setDonation] = useState(null);
+  const [activeDonation, setActiveDonation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,19 +23,42 @@ const ActiveDonation = ({ onClose }) => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/active-donation`, {
           withCredentials: true,
-        });        
-        console.log(response.data);
-        setDonation(response.data.data);
-      } catch (err) {
+        });
+        setActiveDonation(response.data.data);
+      } catch (error) {
+        console.error("Error fetching active donation:", error);
         setError('Failed to load active donation');
       } finally {
         setLoading(false);
       }
     };
+
     fetchActiveDonation();
   }, []);
 
   const getStatusIndex = (status) => statusStages.indexOf(status);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+      </div>
+    );
+  }
+
+  if (!activeDonation) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[200px] p-4 text-center">
+        <div className="text-gray-500 mb-4">
+          <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-semibold mb-2">No Active Donations</h3>
+        <p className="text-gray-600">You don't have any active donations at the moment.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -51,9 +74,9 @@ const ActiveDonation = ({ onClose }) => {
               <div key={index} className="flex items-center">
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0.5 }}
-                  animate={{ scale: getStatusIndex(donation?.status) >= index ? 1.2 : 1, opacity: getStatusIndex(donation?.status) >= index ? 1 : 0.5 }}
+                  animate={{ scale: getStatusIndex(activeDonation?.status) >= index ? 1.2 : 1, opacity: getStatusIndex(activeDonation?.status) >= index ? 1 : 0.5 }}
                   transition={{ duration: 0.3 }}
-                  className={`p-2 rounded-full ${getStatusIndex(donation?.status) >= index ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-700'}`}
+                  className={`p-2 rounded-full ${getStatusIndex(activeDonation?.status) >= index ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-700'}`}
                 >
                   {index === 0 && <FaClock size={18} />}
                   {index === 1 && <FaCheckCircle size={18} />}
@@ -64,11 +87,11 @@ const ActiveDonation = ({ onClose }) => {
                 {index < statusStages.length - 1 && (
                   <motion.div
                     initial={{ opacity: 0.3, width: '20px' }}
-                    animate={{ opacity: getStatusIndex(donation?.status) > index ? 1 : 0.3, width: '40px' }}
+                    animate={{ opacity: getStatusIndex(activeDonation?.status) > index ? 1 : 0.3, width: '40px' }}
                     transition={{ duration: 0.3 }}
                     className="mx-1 flex items-center justify-center"
                   >
-                    <FaArrowRight className={`text-lg ${getStatusIndex(donation?.status) > index ? 'text-green-500' : 'text-gray-400'}`} />
+                    <FaArrowRight className={`text-lg ${getStatusIndex(activeDonation?.status) > index ? 'text-green-500' : 'text-gray-400'}`} />
                   </motion.div>
                 )}
               </div>
@@ -80,11 +103,11 @@ const ActiveDonation = ({ onClose }) => {
         </div>
 
         {/* Loading/Error States */}
-        {loading ? (
-          <div className="text-center text-gray-600">Loading active donation...</div>
-        ) : error ? (
+        {error && (
           <div className="text-center text-red-500">{error}</div>
-        ) : donation ? (
+        )}
+
+        {activeDonation && (
           <div className="overflow-x-auto rounded-lg shadow-md">
             <table className="w-full border-collapse bg-white overflow-hidden rounded-md shadow-lg">
               <thead>
@@ -99,29 +122,27 @@ const ActiveDonation = ({ onClose }) => {
               </thead>
               <tbody className="text-gray-700">
                 <tr className="border-b border-gray-300 hover:bg-gray-100 transition duration-300">
-                  <td className="py-3 px-6">{donation.mealDescription}</td>
-                  <td className="py-3 px-6 text-center">{donation.quantity}</td>
+                  <td className="py-3 px-6">{activeDonation.mealDescription}</td>
+                  <td className="py-3 px-6 text-center">{activeDonation.quantity}</td>
                   <td className="py-3 px-6 text-center">
                     <FaCalendarAlt className="inline text-gray-500 mr-2" />
-                    {new Date(donation.schedulePickUp).toLocaleDateString()}
+                    {new Date(activeDonation.schedulePickUp).toLocaleDateString()}
                   </td>
                   <td className="py-3 px-6 text-center">
                     <FaMapMarkerAlt className="inline text-red-500 mr-2" />
-                    {donation.pincode}
+                    {activeDonation.pincode}
                   </td>
                   <td className="py-3 px-6 text-center">
                     <FaUser className="inline text-blue-500 mr-2" />
-                    {donation.acceptedBy || 'N/A'}
+                    {activeDonation.acceptedBy?.name || 'N/A'}
                   </td>
                   <td className="py-3 px-6 text-center font-semibold">
-                    {donation.status}
+                    {activeDonation.status}
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-        ) : (
-          <div className="text-center text-gray-600">No active donation found.</div>
         )}
         <ToastContainer />
       </div>
