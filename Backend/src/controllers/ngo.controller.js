@@ -289,4 +289,37 @@ const updateDonationStatus = async (req, res) => {
 //     return true;
 // };
 
-export { getAllFoodDonations, rejectFoodDonation, acceptFoodDonation, getDonationHistory, getActiveDonation, donationRequest, updateDonationStatus, verifyOTP } 
+
+const submitReview = async (req, res) => {
+  try {
+    const { donationId } = req.params;
+    const { rating, comment } = req.body;
+    const ngoId = req.user._id; // Assuming req.user contains authenticated NGO details
+
+    // Validate input
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ success: false, message: "Invalid rating. It must be between 1 and 5." });
+    }
+    if (!comment || comment.trim().length === 0) {
+      return res.status(400).json({ success: false, message: "Comment is required." });
+    }
+
+    // Find the donation
+    const donation = await FoodDonation.findById(donationId);
+    if (!donation) {
+      return res.status(404).json({ success: false, message: "Donation not found." });
+    }
+
+    // Add review
+    donation.reviews.push({ ngo: ngoId, rating, comment });
+    await donation.save();
+
+    res.status(200).json({ success: true, message: "Review submitted successfully", donation });
+  } catch (error) {
+    console.error("Error submitting review:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+export { getAllFoodDonations, rejectFoodDonation, acceptFoodDonation, getDonationHistory, getActiveDonation, donationRequest, updateDonationStatus, verifyOTP, submitReview } 
