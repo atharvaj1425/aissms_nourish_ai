@@ -6,7 +6,7 @@ import { FoodDonation } from "../models/fooddonation.models.js";
 import { Volunteer } from "../models/volunteer.models.js"; 
 import { User } from "../models/user.models.js"
 import { generateAndSendOTP, verifyOTP } from '../utils/otp.js';
-
+import { VolunteerRedistribute } from "../models/volunteerRedistribute.model.js";
 export const generateAccessToken = async(userId) => {
     try{
         const user = await Volunteer.findById(userId);
@@ -268,5 +268,100 @@ const updateDonationStatus = async (req, res) => {
     }
 };
 
+// Controller to get incoming redistributions
+const getIncomingRedistributions = asyncHandler(async (req, res) => {
+    try {
+        const redistributions = await VolunteerRedistribute.find({ status: "Redistributed" })
+            .populate("donor", "name")
+            .populate("volunteer", "name");
 
-export {  getAllFoodDonations, rejectFoodDonation, acceptFoodDonation, getDonationHistory, getActiveDonation,updateDonationStatus }
+        return res.status(200).json(new ApiResponse(200, redistributions, "Incoming redistributions fetched successfully"));
+    } catch (error) {
+        console.error("Error fetching incoming redistributions:", error);
+        throw new ApiError(500, "Failed to fetch incoming redistributions");
+    }
+});
+
+// Controller to get redistribution history
+const getRedistributionHistory = asyncHandler(async (req, res) => {
+    try {
+        const volunteerId = req.user._id;
+        const redistributions = await VolunteerRedistribute.find({ volunteer: volunteerId })
+            .populate("donor", "name")
+            .populate("volunteer", "name")
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json(new ApiResponse(200, redistributions, "Redistribution history fetched successfully"));
+    } catch (error) {
+        console.error("Error fetching redistribution history:", error);
+        throw new ApiError(500, "Failed to fetch redistribution history");
+    }
+});
+
+// Controller to accept a redistribution
+const acceptRedistribution = asyncHandler(async (req, res) => {
+    const { redistributionId } = req.params;
+    const volunteerId = req.user._id;
+
+    try {
+        const redistribution = await VolunteerRedistribute.findById(redistributionId);
+
+        if (!redistribution) {
+            return res.status(404).json(new ApiResponse(404, null, "Redistribution not found"));
+        }
+
+        redistribution.status = "Redistribute Accepted";
+        redistribution.volunteerId = volunteerId;
+        await redistribution.save();
+
+        return res.status(200).json(new ApiResponse(200, redistribution, "Redistribution accepted successfully"));
+    } catch (error) {
+        console.error("Error accepting redistribution:", error);
+        throw new ApiError(500, "Failed to accept redistribution");
+    }
+});
+
+// Controller to update redistribution status to delivered
+const updateRedistributionStatusToDelivered = asyncHandler(async (req, res) => {
+    const { redistributionId } = req.params;
+
+    try {
+        const redistribution = await VolunteerRedistribute.findById(redistributionId);
+
+        if (!redistribution) {
+            return res.status(404).json(new ApiResponse(404, null, "Redistribution not found"));
+        }
+
+        redistribution.status = "Delivered";
+        await redistribution.save();
+
+        return res.status(200).json(new ApiResponse(200, redistribution, "Redistribution status updated to delivered"));
+    } catch (error) {
+        console.error("Error updating redistribution status:", error);
+        throw new ApiError(500, "Failed to update redistribution status");
+    }
+});
+
+// Define the function
+const updateDeliveryStatusWithRemainingQuantity = asyncHandler(async (req, res) => {
+    const { redistributionId, remainingQuantity } = req.body;
+
+    try {
+        const redistribution = await VolunteerRedistribute.findById(redistributionId);
+
+        if (!redistribution) {
+            return res.status(404).json(new ApiResponse(404, null, "Redistribution not found"));
+        }
+
+        redistribution.remainingQuantity = remainingQuantity;
+        redistribution.status = "Partially Delivered";
+        await redistribution.save();
+
+        return res.status(200).json(new ApiResponse(200, redistribution, "Redistribution status updated with remaining quantity"));
+    } catch (error) {
+        console.error("Error updating redistribution status with remaining quantity:", error);
+        throw new ApiError(500, "Failed to update redistribution status");
+    }
+});
+
+export {  getAllFoodDonations, rejectFoodDonation, acceptFoodDonation, getDonationHistory, getActiveDonation,updateDonationStatus, getIncomingRedistributions, getRedistributionHistory, acceptRedistribution, updateRedistributionStatusToDelivered, updateDeliveryStatusWithRemainingQuantity }

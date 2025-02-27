@@ -23,6 +23,4 @@ const VolunteerRedistributeSchema = new mongoose.Schema({
   }
 });
 
-const VolunteerRedistribute = mongoose.model('VolunteerRedistribute', VolunteerRedistributeSchema);
-
-export default VolunteerRedistribute;
+export const VolunteerRedistribute = mongoose.model('VolunteerRedistribute', VolunteerRedistributeSchema);
